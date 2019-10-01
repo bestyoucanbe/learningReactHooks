@@ -21,6 +21,26 @@ const MyItinerary = props => {
             .then(setItineraryList)
     }, [])
 
+    const handleOnClickDeleteButton = deletethisitem => {
+        fetch(`http://localhost:8000/itineraryitems/${deletethisitem}`, {
+            "method": "DELETE",
+            "headers": {
+                "Authorization": `Token ${localStorage.getItem("kennywood_token")}`
+            }
+        })
+            .then(() => {
+                fetch("http://localhost:8000/itineraryitems", {
+                    "method": "GET",
+                    "headers": {
+                        "Accept": "application/json",
+                        "Authorization": `Token ${localStorage.getItem("kennywood_token")}`
+                    }
+                })
+                    .then(response => response.json())
+                    .then(setItineraryList)
+            })
+    }
+
     return (
         <>
             <h2>What I want to Do on Saturday</h2>
@@ -31,6 +51,8 @@ const MyItinerary = props => {
                             {item.starttime}
                             {item.attraction.name}
                             {item.attraction.area.name}
+                            <button className="btn btn-primary" onClick={() => handleOnClickDeleteButton(item.id)}>
+                                Delete This </button>
                         </li>
                         )
                     })
